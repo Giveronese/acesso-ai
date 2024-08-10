@@ -1,0 +1,5 @@
+- cd acesso-ai/
+- git status
+- git add <nome_do_arquivo> ou "."
+- git commit -m "mensagem explicando o que voce fez brevemente"
+- git push
