@@ -1,10 +1,15 @@
+TITLE_FONT_SIZE = 18
+
+TITLE_HEIGHT = 40
+
 RELACAO_IMAGENS_TEXTOS = {
 "identificacao_nome" : ["qual o seu nome?"],
 "identificacao_idade" : ["qual a sua idade?"],
 "identificacao_naturalidade" : ["de onde você é?"],
 "identificacao_estado_civil" : ["qual o seu estado civil?"],
 "identificacao_profissao" : ["trabalha com o que?"],
-"queixa_principal" : ["como posso ajudar?"],
+"queixa_principal_pergunta_aberta" : ["como posso ajudar?"],
+"queixa_principal_imagens_auxiliares" : ["imagens auxiliares"],
 "HMA_inicio" : ["quando começou?"],
 "HMA_local" : ["onde está o problema?"],
 "HMA_evolucao" : ["ele se manteve igual, melhorou ou piorou?"],

@@ -1,0 +1,2 @@
+source C:/Users/bruno\/miniconda3/etc/profile.d/conda.sh
+conda activate .acesso_ai
