@@ -2,6 +2,10 @@ TITLE_FONT_SIZE = 18
 
 TITLE_HEIGHT = 40
 
+BUTTON_WIDTH = 280
+
+BUTTON_HEIGHT = 50
+
 RELACAO_IMAGENS_TEXTOS = {
 "identificacao_nome" : ["qual o seu nome?"],
 "identificacao_idade" : ["qual a sua idade?"],

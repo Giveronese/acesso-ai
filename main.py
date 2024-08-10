@@ -1,4 +1,5 @@
 # main.py
+from kivy.core.window import Window
 from kivy.app import App
 from kivy.uix.screenmanager import ScreenManager
 from screens import (
@@ -8,6 +9,9 @@ from screens import (
     HistoriaFamilialScreen, HistoriaFamiliarScreen, HistoriaPsicossocialScreen,
     RevisaoDeSistemasScreen
 )
+
+# Set the window size to a typical smartphone size
+Window.size = (450, 800)
 
 class SlideApp(App):
     def build(self):

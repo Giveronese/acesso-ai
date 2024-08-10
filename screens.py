@@ -1,6 +1,7 @@
 # screens.py
 import os.path
 
+from kivy.core.window import Window
 from kivy.uix.screenmanager import Screen
 from kivy.uix.button import Button
 from kivy.uix.boxlayout import BoxLayout
@@ -106,15 +107,41 @@ class BaseScreen(Screen):
         popup.open()
     
     def create_buttons(self, button_texts):
-        button_layout = BoxLayout(orientation='vertical', spacing=10, size_hint=(None, None), size=(200, 75*len(button_texts)))
-        button_layout.pos_hint = {'center_x': 0.5, 'center_y': 0.5}
+        # Define the grid layout with fixed column width
+        grid_layout = GridLayout(cols=1, spacing=10, size_hint_y=None)
+        grid_layout.bind(minimum_height=grid_layout.setter('height'))
+
+        # Define button dimensions
+        button_width = 280
+        button_height = 50
 
         for text, screen_name in button_texts:
-            btn = Button(text=text, size_hint_y=None, height=50)
-            btn.bind(on_press=lambda instance, sn=screen_name: self.go_to_screen(sn))  # Capture current value of screen_name
-            button_layout.add_widget(btn)
+            btn = Button(text=text, size_hint=(None, None), size=(button_width, button_height))
+            if screen_name in constants.RELACAO_IMAGENS_TEXTOS.keys():
+                btn.bind(on_press=self.create_image_popup_handler(f'assets/imagens/{screen_name}.jpg', 'Informação da Imagem', text))
+            else:
+                btn.bind(on_press=lambda instance, sn=screen_name: self.go_to_screen(sn))
+            grid_layout.add_widget(btn)
 
-        self.layout.add_widget(button_layout)
+        # Get the actual screen height
+        screen_height = Window.height
+        padding_height = screen_height * 0.2  # 20% padding
+
+        # Create a scroll view with adjusted height to include padding
+        scroll_view = ScrollView(size_hint=(None, None), size=(button_width, screen_height * 0.6))  # 60% of the screen height
+        scroll_view.pos_hint = {'center_x': 0.5, 'center_y': 0.5}  # Centered vertically and horizontally
+        scroll_view.add_widget(grid_layout)
+
+        # Create the main layout and add the scroll view to it
+        main_layout = BoxLayout(orientation='vertical', size_hint=(None, None), size=(button_width + 20, screen_height - padding_height))
+        main_layout.pos_hint = {'center_x': 0.5, 'y': 0}  # Adjusted to fit under the title
+        main_layout.add_widget(scroll_view)
+
+        # Add the main layout to the screen's content layout
+        self.content_layout.add_widget(main_layout)
+
+        # Print the screen height for debugging
+        print("Screen Height:", screen_height)
 
     def go_to_screen(self, screen_name):
         if self.manager:
@@ -126,9 +153,19 @@ class BaseScreen(Screen):
 class HomeScreen(BaseScreen):
     def __init__(self, **kwargs):
         super(HomeScreen, self).__init__('assets/imagens/background.png', **kwargs)
-        
-        title = Label(text='Acesso', font_size=32, size_hint_y=None, height=constants.TITLE_HEIGHT)
-        self.content_layout.add_widget(title)
+
+        # Get the actual screen height
+        screen_height = Window.height
+        padding_height = screen_height * 0.2  # 20% padding
+
+        # Create a layout for the title with the specified padding at the top
+        title_layout = BoxLayout(orientation='vertical', size_hint=(None, None), size=(Window.width, padding_height))
+        title_layout.pos_hint = {'center_x': 0.5, 'top': 1}  # Position at the top of the screen
+
+        # Add the title label to the title layout
+        title = Label(text='Acesso', font_size=32, size_hint_y=None, height=constants.TITLE_HEIGHT, color=get_color_from_hex('#4E5D5A'))
+        title_layout.add_widget(title)
+        self.content_layout.add_widget(title_layout)
 
         button_texts = [
             ('INICIAR', 'starting_screen'),
@@ -163,76 +200,49 @@ class StartingScreen(BaseScreen):
             ('HISTÓRIA FAMILIAR', 'historiafamiliar'),
             ('HISTÓRIA PSICOSSOCIAL', 'historiapsicossocial'),
             ('REVISÃO DE SISTEMAS', 'revisaodesistemas'),
-            ('MOSTRAR IMAGEM', 'show_image')
+            ('MOSTRAR IMAGEM', 'identificacao_nome'),
         ]
 
-        grid_layout = GridLayout(cols=1, spacing=10, size_hint_y=None)
-        grid_layout.bind(minimum_height=grid_layout.setter('height'))
-        
-        for text, screen_name in button_texts:
-            btn = Button(text=text, size_hint_y=None, height=30)
-            if screen_name == 'show_image':
-                btn.bind(on_press=lambda instance: self.show_image_popup('assets/imagens/identificacao_nome.jpg', "", "teste teste 123"))
-            else:
-                btn.bind(on_press=lambda instance, sn=screen_name: setattr(self.manager, 'current', sn))
-            grid_layout.add_widget(btn)
+        # grid_layout = GridLayout(cols=1, spacing=10, size_hint_y=None)
+        # grid_layout.bind(minimum_height=grid_layout.setter('height'))
 
-        scroll_layout = BoxLayout(size_hint=(None, None), size=(300, 500))
-        scroll_layout.add_widget(grid_layout)
+        # scroll_layout = BoxLayout(size_hint=(None, None), size=(300, 500))
+        # scroll_layout.add_widget(grid_layout)
         
-        main_layout = BoxLayout(orientation='vertical', size_hint=(None, None), size=(300, 400))
-        main_layout.pos_hint = {'center_x': 0.5, 'center_y': 0.5}
-        main_layout.add_widget(scroll_layout)
+        # for text, screen_name in button_texts:
+        #     btn = Button(text=text, size_hint_y=None, height=30)
+        #     if screen_name == 'show_image':
+        #         btn.bind(on_press=lambda instance: self.show_image_popup('assets/imagens/identificacao_nome.jpg', "", "teste teste 123"))
+        #     else:
+        #         btn.bind(on_press=lambda instance, sn=screen_name: setattr(self.manager, 'current', sn))
+        #     grid_layout.add_widget(btn)
+
+        # scroll_layout = BoxLayout(size_hint=(None, None), size=(300, 500))
+        # scroll_layout.add_widget(grid_layout)
         
-        self.content_layout.add_widget(main_layout)
+        # main_layout = BoxLayout(orientation='vertical', size_hint=(None, None), size=(300, 400))
+        # main_layout.pos_hint = {'center_x': 0.5, 'center_y': 0.5}
+        # main_layout.add_widget(scroll_layout)
+        
+        # self.content_layout.add_widget(main_layout)
+
+        self.create_buttons(button_texts)
         self.add_home_button()
 
 class IdentificacaoScreen(BaseScreen):
     def __init__(self, **kwargs):
         super(IdentificacaoScreen, self).__init__('assets/imagens/background.png', **kwargs)
         
-        title = Label(
-            text='Identificação',
-            font_size=constants.TITLE_FONT_SIZE,
-            size_hint_y=None,
-            height=constants.TITLE_HEIGHT,
-            color=get_color_from_hex('#4E5D5A')
-        )
-        title.pos_hint = {'center_x': 0.5, 'top': 1}
+        title = Label(text='Identificação', font_size=32, size_hint_y=None, height=constants.TITLE_HEIGHT)
         self.content_layout.add_widget(title)
 
         button_texts = [
-            ('NOME', 'show_image'),
-            ('IDADE', 'show_image'),
-            ('NATURALIDADE', 'show_image'),
-            ('ESTADO CIVIL', 'show_image'),
-            ('PROFISSÃO', 'show_image')
+            ('INICIAR', 'starting_screen'),
+            ('SOBRE O APP', 'about_screen'),
         ]
 
-        # Similar layout structure as in StartingScreen
-        grid_layout = GridLayout(cols=1, spacing=10, size_hint_y=None)
-        grid_layout.bind(minimum_height=grid_layout.setter('height'))
-        
-        for text, screen_name in button_texts:
-            btn = Button(text=text, size_hint_y=None, height=30)
-            if screen_name == 'show_image':
-                btn.bind(on_press=lambda instance: self.show_image_popup('assets/imagens/identificacao_nome.jpg', "", "teste teste 123"))
-            else:
-                btn.bind(on_press=lambda instance, sn=screen_name: setattr(self.manager, 'current', sn))
-            grid_layout.add_widget(btn)
-
-        scroll_layout = BoxLayout(size_hint=(None, None), size=(300, 500))
-        scroll_layout.add_widget(grid_layout)
-        
-        main_layout = BoxLayout(orientation='vertical', size_hint=(None, None), size=(300, 400))
-        main_layout.pos_hint = {'center_x': 0.5, 'center_y': 0.5}
-        main_layout.add_widget(scroll_layout)
-        
-        self.content_layout.add_widget(main_layout)
+        self.create_buttons(button_texts)
         self.add_home_button()
-
-
-
 
 class AboutScreen(BaseScreen):
     def __init__(self, **kwargs):
