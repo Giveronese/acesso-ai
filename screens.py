@@ -111,29 +111,30 @@ class BaseScreen(Screen):
         grid_layout = GridLayout(cols=1, spacing=10, size_hint_y=None)
         grid_layout.bind(minimum_height=grid_layout.setter('height'))
 
-        # Define button dimensions
-        button_width = 280
-        button_height = 50
-
         for text, screen_name in button_texts:
-            btn = Button(text=text, size_hint=(None, None), size=(button_width, button_height))
+            btn = Button(text=text, size_hint=(None, None), size=(constants.BUTTON_WIDTH, constants.BUTTON_HEIGHT))
+            btn.pos_hint = {'center_x': 0.5}
             if screen_name in constants.RELACAO_IMAGENS_TEXTOS.keys():
                 btn.bind(on_press=self.create_image_popup_handler(f'assets/imagens/{screen_name}.jpg', 'Informação da Imagem', text))
             else:
+                print(f"Screen name: {screen_name}")
                 btn.bind(on_press=lambda instance, sn=screen_name: self.go_to_screen(sn))
             grid_layout.add_widget(btn)
 
-        # Get the actual screen height
-        screen_height = Window.height
+        # Get the actual screen dimensions
+        screen_width = Window.size[0]
+        screen_height = Window.size[1]
+        print(screen_width, screen_height)
+        padding_width = screen_width * 0.1  # 10% padding
         padding_height = screen_height * 0.2  # 20% padding
 
         # Create a scroll view with adjusted height to include padding
-        scroll_view = ScrollView(size_hint=(None, None), size=(button_width, screen_height * 0.6))  # 60% of the screen height
+        scroll_view = ScrollView(size_hint=(None, None), size=(constants.BUTTON_WIDTH + 20, screen_height * 0.6))  # 60% of the screen height
         scroll_view.pos_hint = {'center_x': 0.5, 'center_y': 0.5}  # Centered vertically and horizontally
         scroll_view.add_widget(grid_layout)
 
         # Create the main layout and add the scroll view to it
-        main_layout = BoxLayout(orientation='vertical', size_hint=(None, None), size=(button_width + 20, screen_height - padding_height))
+        main_layout = BoxLayout(orientation='vertical', size_hint=(None, None), size=(constants.BUTTON_WIDTH + 40, screen_height - padding_height))
         main_layout.pos_hint = {'center_x': 0.5, 'y': 0}  # Adjusted to fit under the title
         main_layout.add_widget(scroll_view)
 
@@ -148,12 +149,8 @@ class BaseScreen(Screen):
             self.manager.current = screen_name
         else:
             print("ScreenManager not yet assigned to this screen.")
-
-# Define your screens
-class HomeScreen(BaseScreen):
-    def __init__(self, **kwargs):
-        super(HomeScreen, self).__init__('assets/imagens/background.png', **kwargs)
-
+    
+    def create_title(self, title_text, font_size=constants.TITLE_FONT_SIZE, hex_color='#4E5D5A'):
         # Get the actual screen height
         screen_height = Window.height
         padding_height = screen_height * 0.2  # 20% padding
@@ -163,9 +160,16 @@ class HomeScreen(BaseScreen):
         title_layout.pos_hint = {'center_x': 0.5, 'top': 1}  # Position at the top of the screen
 
         # Add the title label to the title layout
-        title = Label(text='Acesso', font_size=32, size_hint_y=None, height=constants.TITLE_HEIGHT, color=get_color_from_hex('#4E5D5A'))
+        title = Label(text=title_text, font_size=font_size, size_hint_y=None, height=constants.TITLE_HEIGHT, color=get_color_from_hex(hex_color))
         title_layout.add_widget(title)
         self.content_layout.add_widget(title_layout)
+
+# Define your screens
+class HomeScreen(BaseScreen):
+    def __init__(self, **kwargs):
+        super(HomeScreen, self).__init__('assets/imagens/background.png', **kwargs)
+
+        self.create_title('Acesso', font_size=32)
 
         button_texts = [
             ('INICIAR', 'starting_screen'),
@@ -178,15 +182,7 @@ class StartingScreen(BaseScreen):
     def __init__(self, **kwargs):
         super(StartingScreen, self).__init__('assets/imagens/background.png', **kwargs)
         
-        title = Label(
-            text='Selecione a etapa da entrevista',
-            font_size=constants.TITLE_FONT_SIZE,
-            size_hint_y=None,
-            height=constants.TITLE_HEIGHT,
-            color=get_color_from_hex('#4E5D5A')
-        )
-        title.pos_hint = {'center_x': 0.5, 'top': 1}
-        self.content_layout.add_widget(title)
+        self.create_title('Selecione a etapa da entrevista')
 
         button_texts = [
             ('IDENTIFICAÇÃO', 'identificacao'),
@@ -230,11 +226,22 @@ class StartingScreen(BaseScreen):
         self.add_home_button()
 
 class IdentificacaoScreen(BaseScreen):
+    # def __init__(self, **kwargs):
+    #     super(IdentificacaoScreen, self).__init__('assets/imagens/background.png', **kwargs)
+        
+    #     self.create_title('Identificação')
+
+    #     button_texts = [
+    #         ('INICIAR', 'starting_screen'),
+    #         ('SOBRE O APP', 'about_screen'),
+    #     ]
+
+    #     self.create_buttons(button_texts)
+    #     self.add_home_button()
     def __init__(self, **kwargs):
         super(IdentificacaoScreen, self).__init__('assets/imagens/background.png', **kwargs)
-        
-        title = Label(text='Identificação', font_size=32, size_hint_y=None, height=constants.TITLE_HEIGHT)
-        self.content_layout.add_widget(title)
+
+        self.create_title('Acesso', font_size=32)
 
         button_texts = [
             ('INICIAR', 'starting_screen'),
@@ -242,7 +249,6 @@ class IdentificacaoScreen(BaseScreen):
         ]
 
         self.create_buttons(button_texts)
-        self.add_home_button()
 
 class AboutScreen(BaseScreen):
     def __init__(self, **kwargs):
