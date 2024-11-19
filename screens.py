@@ -301,11 +301,8 @@ class QueixaPrincipalScreen(BaseScreen):
         self.create_title('QUEIXA PRINCIPAL')
 
         button_texts = [
-            ('NOME', 'identificacao_nome'),
-            ('IDADE', 'identificacao_idade'),
-            ('NATURALIDADE', 'identificacao_naturalidade'),
-            ('ESTADO CIVIL', 'identificacao_estado_civil'),
-            ('PROFISSÃO', 'identificacao_profissao'),
+            ('PERGUNTA ABERTA', 'queixa_principal_pergunta_aberta'),
+            ('IMAGENS AUXILIARES', 'queixa_principal_imagens_auxiliares'),
         ]
 
         self.create_buttons(button_texts)
@@ -316,55 +313,163 @@ class QueixaPrincipalScreen(BaseScreen):
 class HMAScreen(BaseScreen):
     def __init__(self, **kwargs):
         super(HMAScreen, self).__init__('assets/imagens/background.png', **kwargs)
-        self.content_layout.add_widget(Label(text='HMA Screen'))
+        self.create_title('HMA')
+
+        button_texts = [
+            ('INÍCIO DOS SINTOMAS', 'HMA_inicio'),
+            ('LOCAL DOS SINTOMAS', 'HMA_local'),
+            ('EVOLUÇÃO DOS SINTOMAS', 'HMA_evolucao'),
+            ('IRRADIAÇÃO DOS SINTOMAS', 'HMA_irradiacao'),
+            ('SINTOMAS ASSOCIADOS', 'HMA_sintomas'),
+            ('FATOR DESENCADEANTE', 'HMA_desencadeante'),
+            ('FATOR AGRAVANTE', 'HMA_agravante'),
+            ('FATOR ATENUANTE', 'HMA_atenuante'),
+            ('MEDICAMENTOS NÃO CRÔNICOS', 'HMA_medicamentos_nao_cronicos'),
+            ('DECÁLOGO DA DOR', 'HMA_decalogo'),
+        ]
+
+        self.create_buttons(button_texts)
+
+        # Add home button
         self.add_home_button()
 
 class HPPScreen(BaseScreen):
     def __init__(self, **kwargs):
         super(HPPScreen, self).__init__('assets/imagens/background.png', **kwargs)
-        self.content_layout.add_widget(Label(text='História Pregressa Screen'))
+        self.create_title('HPP')
+
+        button_texts = [
+            ('CIRURGIAS', 'HPP_cirurgias'),
+            ('ALERGIAS', 'HPP_alergias'),
+            ('DCNT', 'HPP_DCNT'),
+            ('MEDICAMENTOS CRÔNICOS', 'HPP_medicamentos_cronicos'),
+            ('CALENDÁRIO VACINAL', 'HPP_vacinacao'),
+        ]
+
+        self.create_buttons(button_texts)
+
+        # Add home button
         self.add_home_button()
 
 class HistoriaFisiologicaScreen(BaseScreen):
     def __init__(self, **kwargs):
         super(HistoriaFisiologicaScreen, self).__init__('assets/imagens/background.png', **kwargs)
-        self.content_layout.add_widget(Label(text='História Fisiológica Screen'))
+        self.create_title('HISTÓRIA FISIOLÓGICA')
+
+        button_texts = [
+            ('DUM', 'Hfisio_DUM'),
+            ('RELAÇÃO SEXUAL', 'Hfisio_relacao_sexual'),
+            ('GESTAÇÃO', 'Hfisio_gestacao'),
+            ('EXAMES PREVENTIVOS', 'Hfisio_exames_preventivos'),
+            ('MENOPAUSA', 'Hfisio_menopausa'),
+            ('PUBERDADE', 'Hfisio_puberdade'),
+        ]
+
+        self.create_buttons(button_texts)
+
+        # Add home button
         self.add_home_button()
 
 class HistoriaFamilialScreen(BaseScreen):
     def __init__(self, **kwargs):
         super(HistoriaFamilialScreen, self).__init__('assets/imagens/background.png', **kwargs)
-        self.content_layout.add_widget(Label(text='História Familial Screen'))
+        self.create_title('HISTÓRIA FAMILIAL')
+
+        button_texts = [
+            ('DOENÇAS NO TRABALHO', 'Hfamilial_trabalho'),
+            ('DOENÇAS NA ESCOLA', 'Hfamilial_escola'),
+        ]
+
+        self.create_buttons(button_texts)
+
+        # Add home button
         self.add_home_button()
 
 class HistoriaFamiliarScreen(BaseScreen):
     def __init__(self, **kwargs):
         super(HistoriaFamiliarScreen, self).__init__('assets/imagens/background.png', **kwargs)
-        self.content_layout.add_widget(Label(text='História Familiar Screen'))
+        self.create_title('HISTÓRIA FAMILIAR')
+
+        button_texts = [
+            ('DCNT', 'Hfamiliar_DCNT'),
+            ('ÓBITOS', 'Hfamiliar_obitos'),
+        ]
+
+        self.create_buttons(button_texts)
+
+        # Add home button
         self.add_home_button()
 
 class HistoriaPsicossocialScreen(BaseScreen):
     def __init__(self, **kwargs):
         super(HistoriaPsicossocialScreen, self).__init__('assets/imagens/background.png', **kwargs)
-        self.content_layout.add_widget(Label(text='História Psicossocial Screen'))
+        self.create_title('HISTÓRIA PSICOSSOCIAL')
+
+        button_texts = [
+            ('RENDA FAMILIAR', 'Hpsico_renda'),
+            ('RELIGIÃO', 'Hpsico_religiao'),
+            ('ESCOLARIDADE', 'Hpsico_escolaridade'),
+            ('HABITAÇÃO', 'Hpsico_habitacao'),
+            ('RELAÇÕES FAMILIARES', 'Hpsico_relacoes'),
+        ]
+
+        self.create_buttons(button_texts)
+
+        # Add home button
         self.add_home_button()
 
 class SubstanciasScreen(BaseScreen):
     def __init__(self, **kwargs):
         super(SubstanciasScreen, self).__init__('assets/imagens/background.png', **kwargs)
-        self.content_layout.add_widget(Label(text='Uso de Substâncias Screen'))
+        self.create_title('HISTÓRIA PSICOSSOCIAL')
+
+        button_texts = [
+            ('ÁLCOOL', 'subst_alcool'),
+            ('TABACO', 'subst_tabaco'),
+            ('DROGAS ILÍCITAS', 'subst_drogas_ilicitas'),
+        ]
+
+        self.create_buttons(button_texts)
+
+        # Add home button
         self.add_home_button()
 
 class HabitosDeVidaScreen(BaseScreen):
     def __init__(self, **kwargs):
         super(HabitosDeVidaScreen, self).__init__('assets/imagens/background.png', **kwargs)
-        self.content_layout.add_widget(Label(text='Hábitos de Vida Screen'))
+        self.create_title('HÁBITOS DE VIDA')
+
+        button_texts = [
+            ('ATIVIDADE FÍSICA', 'habitos_atividade_fisica'),
+            ('SONO', 'habitos_sono'),
+            ('ALIMENTAÇÃO', 'habitos_alimentacao'),
+            ('HIGIENE', 'habitos_higiene'),
+        ]
+
+        self.create_buttons(button_texts)
+
+        # Add home button
         self.add_home_button()
 
 class RevisaoDeSistemasScreen(BaseScreen):
     def __init__(self, **kwargs):
         super(RevisaoDeSistemasScreen, self).__init__('assets/imagens/background.png', **kwargs)
-        self.content_layout.add_widget(Label(text='Revisão de Sistemas Screen'))
+        self.create_title('HÁBITOS DE VIDA')
+
+        button_texts = [
+            ('CARDIOVASCULAR', 'revisao_sistemas_cardiovascular'),
+            ('RESPIRAÇÃO', 'revisao_sistemas_respiratorio'),
+            ('TGI', 'revisao_sistemas_TGI'),
+            ('UROGENITAL', 'revisao_sistemas_urogenital'),
+            ('NEUROLÓGICO', 'revisao_sistemas_neurologico'),
+            ('HEMATOLÓGICO', 'revisao_sistemas_hematologico'),
+            ('ENDÓCRINO', 'revisao_sistemas_endocrino'),
+            ('OSTEOMUSCULAR', 'revisao_sistemas_osteomuscular'),
+        ]
+
+        self.create_buttons(button_texts)
+
+        # Add home button
         self.add_home_button()
 
 # Level 3 Screens
