@@ -15,6 +15,8 @@ from kivy.uix.carousel import Carousel
 from kivy.uix.scrollview import ScrollView
 from kivy.utils import get_color_from_hex
 from widgets import ImageButton
+from kivy.uix.widget import Widget
+
 
 import constants
 
@@ -102,46 +104,69 @@ class BaseScreen(Screen):
         close_button.bind(on_press=lambda instance: popup.dismiss())
         content.add_widget(close_button)
 
-        popup = Popup(title=image_description.upper(), content=content, size_hint=(1, 1))
+        # Configure Popup with white background
+        popup = Popup(
+            title=image_description.capitalize(),
+            title_color=get_color_from_hex('#000000'),
+            title_size=constants.TITLE_FONT_SIZE,
+            content=content,
+            size_hint=(1, 1),
+            background='',  # Remove background image
+            #background_color=(1, 1, 1, 1)  # RGBA for white background
+        )
         popup.open()
     
     def create_buttons(self, button_texts):
-        # Define the grid layout with fixed column width
+        # Define o layout em grade para os botões
         grid_layout = GridLayout(cols=1, spacing=10, size_hint_y=None)
         grid_layout.bind(minimum_height=grid_layout.setter('height'))
 
         for text, screen_name in button_texts:
-            btn = Button(text=text, size_hint=(None, None), size=(constants.BUTTON_WIDTH, constants.BUTTON_HEIGHT))
+            btn = Button(
+                text=text,
+                size_hint=(None, None),
+                size=(constants.BUTTON_WIDTH, constants.BUTTON_HEIGHT),  # Tamanho inicial
+                halign='center',
+                valign='middle'
+            )
+            btn.text_size = (btn.width - constants.BUTTON_MARGIN, None)
+
+            # Ajuste dinâmico da altura
+            btn.bind(
+                texture_size=lambda instance, size: setattr(instance, 'height', instance.texture_size[1] + constants.BUTTON_MARGIN)
+            )
             btn.pos_hint = {'center_x': 0.5}
+
+            # Ações dos botões
             if screen_name in constants.RELACAO_IMAGENS_TEXTOS.keys():
-                btn.bind(on_press=self.create_image_popup_handler(f'assets/imagens/{screen_name}.jpg', 'Informação da Imagem', text))
+                question_text = constants.RELACAO_IMAGENS_TEXTOS[screen_name][0]
+                btn.bind(on_press=self.create_image_popup_handler(f'assets/imagens/{screen_name}.jpg', '', question_text))
             else:
-                print(f"Screen name: {screen_name}")
                 btn.bind(on_press=lambda instance, sn=screen_name: self.go_to_screen(sn))
+
             grid_layout.add_widget(btn)
 
-        # Get the actual screen dimensions
-        screen_width = Window.size[0]
-        screen_height = Window.size[1]
-        print(screen_width, screen_height)
-        padding_width = screen_width * 0.1  # 10% padding
-        padding_height = screen_height * 0.2  # 20% padding
-
-        # Create a scroll view with adjusted height to include padding
-        scroll_view = ScrollView(size_hint=(None, None), size=(constants.BUTTON_WIDTH + 20, screen_height * 0.6))  # 60% of the screen height
-        scroll_view.pos_hint = {'center_x': 0.5, 'center_y': 0.5}  # Centered vertically and horizontally
+        # Calcula a largura do `ScrollView` considerando a barra de rolagem
+        scrollbar_width = 20  # Tamanho médio da barra de rolagem
+        scroll_view = ScrollView(
+            size_hint=(None, None),
+            size=(constants.BUTTON_WIDTH + scrollbar_width, Window.height * 0.6),
+            pos_hint={'center_x': 0.5, 'center_y': 0.5}
+        )
         scroll_view.add_widget(grid_layout)
 
-        # Create the main layout and add the scroll view to it
-        main_layout = BoxLayout(orientation='vertical', size_hint=(None, None), size=(constants.BUTTON_WIDTH + 40, screen_height - padding_height))
-        main_layout.pos_hint = {'center_x': 0.5, 'y': 0}  # Adjusted to fit under the title
+        # Layout principal para o conjunto de botões
+        main_layout = BoxLayout(
+            orientation='vertical',
+            size_hint=(None, None),
+            size=(constants.BUTTON_WIDTH + scrollbar_width + 20, Window.height * 0.6),
+            pos_hint={'center_x': 0.5, 'center_y': 0.5}
+        )
         main_layout.add_widget(scroll_view)
 
-        # Add the main layout to the screen's content layout
+        # Adiciona o layout de botões ao conteúdo da tela
         self.content_layout.add_widget(main_layout)
 
-        # Print the screen height for debugging
-        print("Screen Height:", screen_height)
 
     def go_to_screen(self, screen_name):
         if self.manager:
@@ -150,17 +175,36 @@ class BaseScreen(Screen):
             print("ScreenManager not yet assigned to this screen.")
     
     def create_title(self, title_text, font_size=constants.TITLE_FONT_SIZE, hex_color='#4E5D5A'):
-        # Get the actual screen height
-        screen_height = Window.height
-        padding_height = screen_height * 0.2  # 20% padding
+        # Cria o layout vertical principal
+        title_layout = BoxLayout(orientation='vertical', size_hint_y=None)
+        
+        # Cria o título como um Label
+        title = Label(
+            text=title_text,
+            font_size=font_size,
+            size_hint=(1, None),
+            halign='center',
+            valign='middle',
+            color=get_color_from_hex(hex_color)
+        )
+        title.bind(
+            texture_size=lambda instance, size: setattr(instance, 'height', instance.texture_size[1] + 20)  # Altura dinâmica
+        )
+        title.text_size = (Window.width * 0.6, None)  # Limita a largura do texto para centralização
 
-        # Create a layout for the title with the specified padding at the top
-        title_layout = BoxLayout(orientation='vertical', size_hint=(None, None), size=(Window.width, padding_height))
-        title_layout.pos_hint = {'center_x': 0.5, 'top': 1}  # Position at the top of the screen
+        # Adiciona espaçamento proporcional
+        spacer_top = Widget(size_hint=(1, None), height=Window.height * 0.02)  # Espaço de 2% da altura
+        spacer_bottom = Widget(size_hint=(1, None), height=Window.height * 0.20) # Espaço de 20% da altura
 
-        # Add the title label to the title layout
-        title = Label(text=title_text, font_size=font_size, size_hint_y=None, height=constants.TITLE_HEIGHT, color=get_color_from_hex(hex_color))
+        # Adiciona elementos ao layout
+        title_layout.add_widget(spacer_top)
         title_layout.add_widget(title)
+        title_layout.add_widget(spacer_bottom)
+
+        # Define a altura total do layout com base nos componentes
+        title_layout.height = spacer_top.height + title.height + spacer_bottom.height
+
+        # Adiciona o layout de título ao conteúdo principal
         self.content_layout.add_widget(title_layout)
 
 # Define your screens
@@ -168,7 +212,7 @@ class HomeScreen(BaseScreen):
     def __init__(self, **kwargs):
         super(HomeScreen, self).__init__('assets/imagens/background.png', **kwargs)
 
-        self.create_title('Acesso', font_size=32)
+        self.create_title('ACESSO')
 
         button_texts = [
             ('INICIAR', 'starting_screen'),
@@ -182,21 +226,20 @@ class StartingScreen(BaseScreen):
     def __init__(self, **kwargs):
         super(StartingScreen, self).__init__('assets/imagens/background.png', **kwargs)
         
-        self.create_title('Selecione a etapa da entrevista')
+        self.create_title('SELECIONE A ETAPA DA ENTREVISTA')
 
         button_texts = [
             ('IDENTIFICAÇÃO', 'identificacao'),
-            ('QUEIXA PRINCIPAL', 'queixaprincipal'),
-            ('HMA', 'hma'),
-            ('HISTÓRIA PREGRESSA', 'historiapregressa'),
-            ('HÁBITOS DE VIDA', 'habitosdevida'),
-            ('USO DE SUBSTÂNCIAS', 'usodesubstancias'),
-            ('HISTÓRIA FISIOLÓGICA', 'historiafisiologica'),
-            ('HISTÓRIA FAMILIAL', 'historiafamilial'),
-            ('HISTÓRIA FAMILIAR', 'historiafamiliar'),
-            ('HISTÓRIA PSICOSSOCIAL', 'historiapsicossocial'),
-            ('REVISÃO DE SISTEMAS', 'revisaodesistemas'),
-            ('MOSTRAR IMAGEM', 'identificacao_nome'),
+            ('QUEIXA PRINCIPAL', 'queixa_principal'),
+            ('HMA', 'HMA'),
+            ('HISTÓRIA PREGRESSA', 'HPP'),
+            ('HISTÓRIA FISIOLÓGICA', 'Hfisio'),
+            ('HISTÓRIA FAMILIAL', 'Hfamilial'),
+            ('HISTÓRIA FAMILIAR', 'Hfamiliar'),
+            ('HISTÓRIA PSICOSSOCIAL', 'Hpsico'),
+            ('USO DE SUBSTÂNCIAS', 'subst'),
+            ('HÁBITOS DE VIDA', 'habitos'),
+            ('REVISÃO DE SISTEMAS', 'revisao_sistemas'),
         ]
 
         self.create_buttons(button_texts)
@@ -205,6 +248,8 @@ class StartingScreen(BaseScreen):
 class AboutScreen(BaseScreen):
     def __init__(self, **kwargs):
         super(AboutScreen, self).__init__('assets/imagens/background.png', **kwargs)
+
+        self.create_title('SOBRE O APP')
 
         about_text = "Este é um aplicativo desenvolvido para um projeto de iniciação científica do curso de Medicina do Centro Universitário de Patos de Minas - UNIPAM. Seu objetivo é auxiliar as consultas médicas de pacientes com deficiência. Ele foi pensado e elaborado pela estudante Giovana Garbim Veronese, sua orientadora Laís Moreira Borges e seu coorientador Bruno de Paulo Almeida."
 
@@ -234,19 +279,38 @@ class IdentificacaoScreen(BaseScreen):
     def __init__(self, **kwargs):
         super(IdentificacaoScreen, self).__init__('assets/imagens/background.png', **kwargs)
 
-        self.create_title('Oi amor agora já tá funcionando olha', font_size=32)
+        self.create_title('IDENTIFICAÇÃO')
 
         button_texts = [
-            ('INICIAR', 'starting_screen'),
-            ('SOBRE O APP', 'about_screen'),
+            ('NOME', 'identificacao_nome'),
+            ('IDADE', 'identificacao_idade'),
+            ('NATURALIDADE', 'identificacao_naturalidade'),
+            ('ESTADO CIVIL', 'identificacao_estado_civil'),
+            ('PROFISSÃO', 'identificacao_profissao'),
         ]
 
         self.create_buttons(button_texts)
 
+        # Add home button
+        self.add_home_button()
+
 class QueixaPrincipalScreen(BaseScreen):
     def __init__(self, **kwargs):
         super(QueixaPrincipalScreen, self).__init__('assets/imagens/background.png', **kwargs)
-        self.content_layout.add_widget(Label(text='Queixa Principal Screen'))
+
+        self.create_title('QUEIXA PRINCIPAL')
+
+        button_texts = [
+            ('NOME', 'identificacao_nome'),
+            ('IDADE', 'identificacao_idade'),
+            ('NATURALIDADE', 'identificacao_naturalidade'),
+            ('ESTADO CIVIL', 'identificacao_estado_civil'),
+            ('PROFISSÃO', 'identificacao_profissao'),
+        ]
+
+        self.create_buttons(button_texts)
+
+        # Add home button
         self.add_home_button()
 
 class HMAScreen(BaseScreen):
