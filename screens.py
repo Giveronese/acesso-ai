@@ -18,7 +18,6 @@ from widgets import ImageButton
 
 import constants
 
-
 # Define a base screen class to handle the background image
 class BaseScreen(Screen):
     def __init__(self, background_source, **kwargs):
@@ -178,6 +177,7 @@ class HomeScreen(BaseScreen):
 
         self.create_buttons(button_texts)
 
+# Level 1 Screens
 class StartingScreen(BaseScreen):
     def __init__(self, **kwargs):
         super(StartingScreen, self).__init__('assets/imagens/background.png', **kwargs)
@@ -199,56 +199,8 @@ class StartingScreen(BaseScreen):
             ('MOSTRAR IMAGEM', 'identificacao_nome'),
         ]
 
-        # grid_layout = GridLayout(cols=1, spacing=10, size_hint_y=None)
-        # grid_layout.bind(minimum_height=grid_layout.setter('height'))
-
-        # scroll_layout = BoxLayout(size_hint=(None, None), size=(300, 500))
-        # scroll_layout.add_widget(grid_layout)
-        
-        # for text, screen_name in button_texts:
-        #     btn = Button(text=text, size_hint_y=None, height=30)
-        #     if screen_name == 'show_image':
-        #         btn.bind(on_press=lambda instance: self.show_image_popup('assets/imagens/identificacao_nome.jpg', "", "teste teste 123"))
-        #     else:
-        #         btn.bind(on_press=lambda instance, sn=screen_name: setattr(self.manager, 'current', sn))
-        #     grid_layout.add_widget(btn)
-
-        # scroll_layout = BoxLayout(size_hint=(None, None), size=(300, 500))
-        # scroll_layout.add_widget(grid_layout)
-        
-        # main_layout = BoxLayout(orientation='vertical', size_hint=(None, None), size=(300, 400))
-        # main_layout.pos_hint = {'center_x': 0.5, 'center_y': 0.5}
-        # main_layout.add_widget(scroll_layout)
-        
-        # self.content_layout.add_widget(main_layout)
-
         self.create_buttons(button_texts)
         self.add_home_button()
-
-class IdentificacaoScreen(BaseScreen):
-    # def __init__(self, **kwargs):
-    #     super(IdentificacaoScreen, self).__init__('assets/imagens/background.png', **kwargs)
-        
-    #     self.create_title('Identificação')
-
-    #     button_texts = [
-    #         ('INICIAR', 'starting_screen'),
-    #         ('SOBRE O APP', 'about_screen'),
-    #     ]
-
-    #     self.create_buttons(button_texts)
-    #     self.add_home_button()
-    def __init__(self, **kwargs):
-        super(IdentificacaoScreen, self).__init__('assets/imagens/background.png', **kwargs)
-
-        self.create_title('Acesso', font_size=32)
-
-        button_texts = [
-            ('INICIAR', 'starting_screen'),
-            ('SOBRE O APP', 'about_screen'),
-        ]
-
-        self.create_buttons(button_texts)
 
 class AboutScreen(BaseScreen):
     def __init__(self, **kwargs):
@@ -277,12 +229,19 @@ class AboutScreen(BaseScreen):
         # Add home button
         self.add_home_button()
 
-# Define other screens
+# Level 2 Screens
 class IdentificacaoScreen(BaseScreen):
     def __init__(self, **kwargs):
         super(IdentificacaoScreen, self).__init__('assets/imagens/background.png', **kwargs)
-        self.content_layout.add_widget(Label(text='Identificação Screen'))
-        self.add_home_button()
+
+        self.create_title('Oi amor agora já tá funcionando olha', font_size=32)
+
+        button_texts = [
+            ('INICIAR', 'starting_screen'),
+            ('SOBRE O APP', 'about_screen'),
+        ]
+
+        self.create_buttons(button_texts)
 
 class QueixaPrincipalScreen(BaseScreen):
     def __init__(self, **kwargs):
@@ -290,28 +249,16 @@ class QueixaPrincipalScreen(BaseScreen):
         self.content_layout.add_widget(Label(text='Queixa Principal Screen'))
         self.add_home_button()
 
-class HmaScreen(BaseScreen):
+class HMAScreen(BaseScreen):
     def __init__(self, **kwargs):
-        super(HmaScreen, self).__init__('assets/imagens/background.png', **kwargs)
+        super(HMAScreen, self).__init__('assets/imagens/background.png', **kwargs)
         self.content_layout.add_widget(Label(text='HMA Screen'))
         self.add_home_button()
 
-class HistoriaPregressaScreen(BaseScreen):
+class HPPScreen(BaseScreen):
     def __init__(self, **kwargs):
-        super(HistoriaPregressaScreen, self).__init__('assets/imagens/background.png', **kwargs)
+        super(HPPScreen, self).__init__('assets/imagens/background.png', **kwargs)
         self.content_layout.add_widget(Label(text='História Pregressa Screen'))
-        self.add_home_button()
-
-class HabitosDeVidaScreen(BaseScreen):
-    def __init__(self, **kwargs):
-        super(HabitosDeVidaScreen, self).__init__('assets/imagens/background.png', **kwargs)
-        self.content_layout.add_widget(Label(text='Hábitos de Vida Screen'))
-        self.add_home_button()
-
-class UsoDeSubstanciasScreen(BaseScreen):
-    def __init__(self, **kwargs):
-        super(UsoDeSubstanciasScreen, self).__init__('assets/imagens/background.png', **kwargs)
-        self.content_layout.add_widget(Label(text='Uso de Substâncias Screen'))
         self.add_home_button()
 
 class HistoriaFisiologicaScreen(BaseScreen):
@@ -338,8 +285,99 @@ class HistoriaPsicossocialScreen(BaseScreen):
         self.content_layout.add_widget(Label(text='História Psicossocial Screen'))
         self.add_home_button()
 
+class SubstanciasScreen(BaseScreen):
+    def __init__(self, **kwargs):
+        super(SubstanciasScreen, self).__init__('assets/imagens/background.png', **kwargs)
+        self.content_layout.add_widget(Label(text='Uso de Substâncias Screen'))
+        self.add_home_button()
+
+class HabitosDeVidaScreen(BaseScreen):
+    def __init__(self, **kwargs):
+        super(HabitosDeVidaScreen, self).__init__('assets/imagens/background.png', **kwargs)
+        self.content_layout.add_widget(Label(text='Hábitos de Vida Screen'))
+        self.add_home_button()
+
 class RevisaoDeSistemasScreen(BaseScreen):
     def __init__(self, **kwargs):
         super(RevisaoDeSistemasScreen, self).__init__('assets/imagens/background.png', **kwargs)
         self.content_layout.add_widget(Label(text='Revisão de Sistemas Screen'))
+        self.add_home_button()
+
+# Level 3 Screens
+class HMAMedicamentosNaoCronicosScreen(BaseScreen):
+    def __init__(self, **kwargs):
+        super(HMAMedicamentosNaoCronicosScreen, self).__init__('assets/imagens/background.png', **kwargs)
+        self.content_layout.add_widget(Label(text='HMA Medicamentos Não Crônicos Screen'))
+        self.add_home_button()
+
+class HMADecalogoDaDorScreen(BaseScreen):
+    def __init__(self, **kwargs):
+        super(HMADecalogoDaDorScreen, self).__init__('assets/imagens/background.png', **kwargs)
+        self.content_layout.add_widget(Label(text='HMA Decálogo da Dor Screen'))
+        self.add_home_button()
+
+class HPPCirurgiasScreen(BaseScreen):
+    def __init__(self, **kwargs):
+        super(HPPCirurgiasScreen, self).__init__('assets/imagens/background.png', **kwargs)
+        self.content_layout.add_widget(Label(text='HPP Cirurgias Screen'))
+        self.add_home_button()
+
+class HPPMedicamentosCronicosScreen(BaseScreen):
+    def __init__(self, **kwargs):
+        super(HPPMedicamentosCronicosScreen, self).__init__('assets/imagens/background.png', **kwargs)
+        self.content_layout.add_widget(Label(text='HPP Medicamentos Crônicos Screen'))
+        self.add_home_button()
+
+class HistoriaFisiologicaRelacaoSexualScreen(BaseScreen):
+    def __init__(self, **kwargs):
+        super(HistoriaFisiologicaRelacaoSexualScreen, self).__init__('assets/imagens/background.png', **kwargs)
+        self.content_layout.add_widget(Label(text='História Fisiológica Relação Sexual Screen'))
+        self.add_home_button()
+
+class HistoriaFisiologicaGestacaoScreen(BaseScreen):
+    def __init__(self, **kwargs):
+        super(HistoriaFisiologicaGestacaoScreen, self).__init__('assets/imagens/background.png', **kwargs)
+        self.content_layout.add_widget(Label(text='História Fisiológica Gestação Screen'))
+        self.add_home_button()
+
+class HistoriaFisiologicaExamesPreventivosScreen(BaseScreen):
+    def __init__(self, **kwargs):
+        super(HistoriaFisiologicaExamesPreventivosScreen, self).__init__('assets/imagens/background.png', **kwargs)
+        self.content_layout.add_widget(Label(text='História Fisiológica Exames Preventivos Screen'))
+        self.add_home_button()
+
+class HistoriaFisiologicaMenopausaScreen(BaseScreen):
+    def __init__(self, **kwargs):
+        super(HistoriaFisiologicaMenopausaScreen, self).__init__('assets/imagens/background.png', **kwargs)
+        self.content_layout.add_widget(Label(text='História Fisiológica Menopausa Screen'))
+        self.add_home_button()
+
+class HistoriaFisiologicaPuberdadeScreen(BaseScreen):
+    def __init__(self, **kwargs):
+        super(HistoriaFisiologicaPuberdadeScreen, self).__init__('assets/imagens/background.png', **kwargs)
+        self.content_layout.add_widget(Label(text='História Fisiológica Puberdade Screen'))
+        self.add_home_button()
+
+class HistoriaPsicossocialHabitacaoScreen(BaseScreen):
+    def __init__(self, **kwargs):
+        super(HistoriaPsicossocialHabitacaoScreen, self).__init__('assets/imagens/background.png', **kwargs)
+        self.content_layout.add_widget(Label(text='História Psicossocial Habitação Screen'))
+        self.add_home_button()
+
+class SubstanciasAlcoolScreen(BaseScreen):
+    def __init__(self, **kwargs):
+        super(SubstanciasAlcoolScreen, self).__init__('assets/imagens/background.png', **kwargs)
+        self.content_layout.add_widget(Label(text='Uso de Substâncias Álcool Screen'))
+        self.add_home_button()
+
+class SubstanciasTabacoScreen(BaseScreen):
+    def __init__(self, **kwargs):
+        super(SubstanciasTabacoScreen, self).__init__('assets/imagens/background.png', **kwargs)
+        self.content_layout.add_widget(Label(text='Uso de Substâncias Tabaco Screen'))
+        self.add_home_button()
+
+class SubstanciasDrogasIlicitasScreen(BaseScreen):
+    def __init__(self, **kwargs):
+        super(SubstanciasDrogasIlicitasScreen, self).__init__('assets/imagens/background.png', **kwargs)
+        self.content_layout.add_widget(Label(text='Uso de Substâncias Drogas Ilícitas Screen'))
         self.add_home_button()
