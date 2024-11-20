@@ -100,7 +100,14 @@ class BaseScreen(Screen):
         content.add_widget(info_label)
 
         # Add close button
-        close_button = Button(text='FECHAR', size_hint_y=None, height=40)
+        close_button = Button(
+            text='FECHAR', 
+            size_hint_y=None, height=40,                 
+            background_color=get_color_from_hex(constants.BUTTON_BACKGROUND_COLOR),
+            background_normal='',
+            font_name='Roboto',
+            bold=True
+        )
         close_button.bind(on_press=lambda instance: popup.dismiss())
         content.add_widget(close_button)
 
@@ -118,16 +125,26 @@ class BaseScreen(Screen):
     
     def create_buttons(self, button_texts):
         # Define o layout em grade para os botões
-        grid_layout = GridLayout(cols=1, spacing=10, size_hint_y=None)
+        grid_layout = GridLayout(
+            cols=1, 
+            spacing=constants.BUTTON_HEIGHT/2, 
+            size_hint_y=None, 
+            pos_hint={'center_x': 0.5, 'center_y': 0.8}
+        )
         grid_layout.bind(minimum_height=grid_layout.setter('height'))
 
         for text, screen_name in button_texts:
             btn = Button(
                 text=text,
+                font_size=constants.BUTTON_FONT_SIZE,
                 size_hint=(None, None),
                 size=(constants.BUTTON_WIDTH, constants.BUTTON_HEIGHT),  # Tamanho inicial
                 halign='center',
-                valign='middle'
+                valign='middle',
+                background_color=get_color_from_hex(constants.BUTTON_BACKGROUND_COLOR),
+                background_normal='',
+                font_name='Roboto',
+                bold=True
             )
             btn.text_size = (btn.width - constants.BUTTON_MARGIN, None)
 
@@ -150,8 +167,8 @@ class BaseScreen(Screen):
         scrollbar_width = 20  # Tamanho médio da barra de rolagem
         scroll_view = ScrollView(
             size_hint=(None, None),
-            size=(constants.BUTTON_WIDTH + scrollbar_width, Window.height * 0.6),
-            pos_hint={'center_x': 0.5, 'center_y': 0.5}
+            size=(constants.BUTTON_WIDTH + scrollbar_width, Window.height * 0.7),
+            pos_hint={'center_x': 0.5, 'center_y': 0.8}
         )
         scroll_view.add_widget(grid_layout)
 
@@ -159,9 +176,11 @@ class BaseScreen(Screen):
         main_layout = BoxLayout(
             orientation='vertical',
             size_hint=(None, None),
-            size=(constants.BUTTON_WIDTH + scrollbar_width + 20, Window.height * 0.6),
-            pos_hint={'center_x': 0.5, 'center_y': 0.5}
+            size=(constants.BUTTON_WIDTH + scrollbar_width + 20, Window.height * 0.7),
+            pos_hint={'center_x': 0.5, 'center_y': 0.8}
         )
+
+        # Adiciona elementos ao layout
         main_layout.add_widget(scroll_view)
 
         # Adiciona o layout de botões ao conteúdo da tela
@@ -174,7 +193,7 @@ class BaseScreen(Screen):
         else:
             print("ScreenManager not yet assigned to this screen.")
     
-    def create_title(self, title_text, font_size=constants.TITLE_FONT_SIZE, hex_color='#4E5D5A'):
+    def create_title(self, title_text, font_size=constants.TITLE_FONT_SIZE, hex_color='#000000'):
         # Cria o layout vertical principal
         title_layout = BoxLayout(orientation='vertical', size_hint_y=None)
         
@@ -185,8 +204,14 @@ class BaseScreen(Screen):
             size_hint=(1, None),
             halign='center',
             valign='middle',
-            color=get_color_from_hex(hex_color)
+            color=get_color_from_hex(hex_color),
+            bold=True,
+            font_name='Roboto'  # Use a bold font for the title
         )
+        # Other font options could include:
+        # font_name='Roboto-Italic'  # Use an italic font for the title
+        # font_name='Roboto-Black'  # Use a black (heavier) font for the title
+        # font_name='Roboto-Light'  # Use a light font for the title
         title.bind(
             texture_size=lambda instance, size: setattr(instance, 'height', instance.texture_size[1] + 20)  # Altura dinâmica
         )
@@ -194,7 +219,7 @@ class BaseScreen(Screen):
 
         # Adiciona espaçamento proporcional
         spacer_top = Widget(size_hint=(1, None), height=Window.height * 0.02)  # Espaço de 2% da altura
-        spacer_bottom = Widget(size_hint=(1, None), height=Window.height * 0.20) # Espaço de 20% da altura
+        spacer_bottom = Widget(size_hint=(1, None), height=Window.height * 0.05) # Espaço de 20% da altura
 
         # Adiciona elementos ao layout
         title_layout.add_widget(spacer_top)
