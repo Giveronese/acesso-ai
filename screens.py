@@ -62,6 +62,9 @@ class BaseScreen(Screen):
             text=title_text,
             font_size=font_size,
             size_hint=(1, None),
+            # outline_color = get_color_from_hex('#32a852'),
+            # outline_width = 5,
+            # underline = True,
             halign='center',
             valign='middle',
             color=get_color_from_hex(hex_color),
@@ -322,7 +325,7 @@ class HMAScreen(BaseScreen):
             ('FATOR AGRAVANTE', 'HMA_agravante'),
             ('FATOR ATENUANTE', 'HMA_atenuante'),
             ('MEDICAMENTOS NÃO CRÔNICOS', 'HMA_medicamentos_nao_cronicos'),
-            ('DECÁLOGO DA DOR', 'HMA_decalogo'),
+            # ('DECÁLOGO DA DOR', 'HMA_decalogo'),
         ]
 
         self.create_buttons(button_texts)
@@ -613,7 +616,7 @@ class HistoriaFisiologicaPuberdadeScreen(BaseScreen):
             ('MENARCA', 'Hfisio_puberdade_menarca'),
             ('TELARCA', 'Hfisio_puberdade_telarca'),
             ('PUBARCA', 'Hfisio_puberdade_pubarca'),
-            ('SEXARCA', 'Hfisio_puberdade_sexarca'),
+            # ('SEXARCA', 'Hfisio_puberdade_sexarca'),
         ]
 
         self.create_buttons(button_texts)
