@@ -34,49 +34,67 @@ class BaseScreen(Screen):
 
         self.add_widget(self.layout)
 
-    def add_home_button(self):
-        home_button = ImageButton(source='assets/imagens/left_arrow.png', on_press=self.go_to_home_screen)
-        home_button.size_hint = (None, None)
-        home_button.size = (50, 50)
-        home_button.pos_hint = {'right': 1, 'bottom': 1}
-        self.layout.add_widget(home_button)
+    def add_back_button(self):
+        back_button = ImageButton(source='assets/imagens/left_arrow.png', on_press=self.go_to_previous_screen)
+        back_button.size_hint = (None, None)
+        back_button.size = (50, 50)
+        back_button.pos_hint = {'right': 1, 'bottom': 1}
+        self.layout.add_widget(back_button)
 
-    def go_to_home_screen(self, instance):
-        self.manager.current = 'home_screen'
+    def go_to_previous_screen(self, instance):
+        if self.manager and hasattr(self.manager, 'go_to_previous_screen'):
+            self.manager.go_to_previous_screen()
+        else:
+            print("No previous screen to go back to.")
 
-    def add_return_button(self):
-        return_button = ImageButton(source='assets/imagens/left_arrow.png', on_press=self.go_to_starting_screen)
-        return_button.size_hint = (None, None)
-        return_button.size = (50, 50)
-        return_button.pos_hint = {'x': 0, 'y': 0}
-        self.layout.add_widget(return_button)
+    def go_to_screen(self, screen_name):
+        if self.manager:
+            self.manager.current = screen_name
+        else:
+            print("ScreenManager not yet assigned to this screen.")
 
-    def add_buttons_with_spacing(self, button_texts):
-        scroll_view = ScrollView(size_hint=(1, 1))
-        grid_layout = GridLayout(cols=1, spacing=10, size_hint_y=None)
-        grid_layout.bind(minimum_height=grid_layout.setter('height'))
+    def create_title(self, title_text, font_size=constants.TITLE_FONT_SIZE, hex_color='#000000'):
+        # Cria o layout vertical principal
+        title_layout = BoxLayout(orientation='vertical', size_hint_y=None)
+        
+        # Cria o título como um Label
+        title = Label(
+            text=title_text,
+            font_size=font_size,
+            size_hint=(1, None),
+            halign='center',
+            valign='middle',
+            color=get_color_from_hex(hex_color),
+            bold=True,
+            font_name='Roboto'  # Use a bold font for the title
+        )
+        # Other font options could include:
+        # font_name='Roboto-Italic'  # Use an italic font for the title
+        # font_name='Roboto-Black'  # Use a black (heavier) font for the title
+        # font_name='Roboto-Light'  # Use a light font for the title
+        title.bind(
+            texture_size=lambda instance, size: setattr(instance, 'height', instance.texture_size[1] + 20)  # Altura dinâmica
+        )
+        title.text_size = (Window.width * 0.6, None)  # Limita a largura do texto para centralização
 
-        for text, screen_name in button_texts:
-            btn = Button(text=text, size_hint_y=None, height=40)
+        # Adiciona espaçamento proporcional
+        spacer_top = Widget(size_hint=(1, None), height=Window.height * 0.02)  # Espaço de 2% da altura
+        spacer_bottom = Widget(size_hint=(1, None), height=Window.height * 0.05) # Espaço de 20% da altura
 
-            # Define the action based on whether the file exists or not
-            if os.path.isfile(f'assets/imagens/{screen_name}.jpg'):
-                btn.bind(on_press=self.create_image_popup_handler(f'assets/imagens/{screen_name}.jpg', 'Informação da Imagem', text))
-            else:
-                btn.bind(on_press=self.create_screen_transition_handler(screen_name))
-            
-            grid_layout.add_widget(btn)
+        # Adiciona elementos ao layout
+        title_layout.add_widget(spacer_top)
+        title_layout.add_widget(title)
+        title_layout.add_widget(spacer_bottom)
 
-        scroll_view.add_widget(grid_layout)
-        self.content_layout.add_widget(scroll_view)
+        # Define a altura total do layout com base nos componentes
+        title_layout.height = spacer_top.height + title.height + spacer_bottom.height
+
+        # Adiciona o layout de título ao conteúdo principal
+        self.content_layout.add_widget(title_layout)
 
     def create_image_popup_handler(self, image_source, text_info, image_description):
         # This function returns a lambda that will call show_image_popup with the correct arguments
         return lambda instance: self.show_image_popup(image_source, text_info, image_description)
-
-    def create_screen_transition_handler(self, screen_name):
-        # This function returns a lambda that will change the screen
-        return lambda instance: setattr(self.manager, 'current', screen_name)
 
     def show_image_popup(self, image_source, text_info, image_description):
         content = BoxLayout(orientation='vertical', padding=10)
@@ -186,52 +204,6 @@ class BaseScreen(Screen):
         # Adiciona o layout de botões ao conteúdo da tela
         self.content_layout.add_widget(main_layout)
 
-
-    def go_to_screen(self, screen_name):
-        if self.manager:
-            self.manager.current = screen_name
-        else:
-            print("ScreenManager not yet assigned to this screen.")
-    
-    def create_title(self, title_text, font_size=constants.TITLE_FONT_SIZE, hex_color='#000000'):
-        # Cria o layout vertical principal
-        title_layout = BoxLayout(orientation='vertical', size_hint_y=None)
-        
-        # Cria o título como um Label
-        title = Label(
-            text=title_text,
-            font_size=font_size,
-            size_hint=(1, None),
-            halign='center',
-            valign='middle',
-            color=get_color_from_hex(hex_color),
-            bold=True,
-            font_name='Roboto'  # Use a bold font for the title
-        )
-        # Other font options could include:
-        # font_name='Roboto-Italic'  # Use an italic font for the title
-        # font_name='Roboto-Black'  # Use a black (heavier) font for the title
-        # font_name='Roboto-Light'  # Use a light font for the title
-        title.bind(
-            texture_size=lambda instance, size: setattr(instance, 'height', instance.texture_size[1] + 20)  # Altura dinâmica
-        )
-        title.text_size = (Window.width * 0.6, None)  # Limita a largura do texto para centralização
-
-        # Adiciona espaçamento proporcional
-        spacer_top = Widget(size_hint=(1, None), height=Window.height * 0.02)  # Espaço de 2% da altura
-        spacer_bottom = Widget(size_hint=(1, None), height=Window.height * 0.05) # Espaço de 20% da altura
-
-        # Adiciona elementos ao layout
-        title_layout.add_widget(spacer_top)
-        title_layout.add_widget(title)
-        title_layout.add_widget(spacer_bottom)
-
-        # Define a altura total do layout com base nos componentes
-        title_layout.height = spacer_top.height + title.height + spacer_bottom.height
-
-        # Adiciona o layout de título ao conteúdo principal
-        self.content_layout.add_widget(title_layout)
-
 # Define your screens
 class HomeScreen(BaseScreen):
     def __init__(self, **kwargs):
@@ -268,7 +240,7 @@ class StartingScreen(BaseScreen):
         ]
 
         self.create_buttons(button_texts)
-        self.add_home_button()
+        self.add_back_button()
 
 class AboutScreen(BaseScreen):
     def __init__(self, **kwargs):
@@ -297,7 +269,7 @@ class AboutScreen(BaseScreen):
         self.content_layout.add_widget(about_label)
 
         # Add home button
-        self.add_home_button()
+        self.add_back_button()
 
 # Level 2 Screens
 class IdentificacaoScreen(BaseScreen):
@@ -317,7 +289,7 @@ class IdentificacaoScreen(BaseScreen):
         self.create_buttons(button_texts)
 
         # Add home button
-        self.add_home_button()
+        self.add_back_button()
 
 class QueixaPrincipalScreen(BaseScreen):
     def __init__(self, **kwargs):
@@ -333,7 +305,7 @@ class QueixaPrincipalScreen(BaseScreen):
         self.create_buttons(button_texts)
 
         # Add home button
-        self.add_home_button()
+        self.add_back_button()
 
 class HMAScreen(BaseScreen):
     def __init__(self, **kwargs):
@@ -356,7 +328,7 @@ class HMAScreen(BaseScreen):
         self.create_buttons(button_texts)
 
         # Add home button
-        self.add_home_button()
+        self.add_back_button()
 
 class HPPScreen(BaseScreen):
     def __init__(self, **kwargs):
@@ -374,7 +346,7 @@ class HPPScreen(BaseScreen):
         self.create_buttons(button_texts)
 
         # Add home button
-        self.add_home_button()
+        self.add_back_button()
 
 class HistoriaFisiologicaScreen(BaseScreen):
     def __init__(self, **kwargs):
@@ -393,7 +365,7 @@ class HistoriaFisiologicaScreen(BaseScreen):
         self.create_buttons(button_texts)
 
         # Add home button
-        self.add_home_button()
+        self.add_back_button()
 
 class HistoriaFamilialScreen(BaseScreen):
     def __init__(self, **kwargs):
@@ -408,7 +380,7 @@ class HistoriaFamilialScreen(BaseScreen):
         self.create_buttons(button_texts)
 
         # Add home button
-        self.add_home_button()
+        self.add_back_button()
 
 class HistoriaFamiliarScreen(BaseScreen):
     def __init__(self, **kwargs):
@@ -423,7 +395,7 @@ class HistoriaFamiliarScreen(BaseScreen):
         self.create_buttons(button_texts)
 
         # Add home button
-        self.add_home_button()
+        self.add_back_button()
 
 class HistoriaPsicossocialScreen(BaseScreen):
     def __init__(self, **kwargs):
@@ -441,7 +413,7 @@ class HistoriaPsicossocialScreen(BaseScreen):
         self.create_buttons(button_texts)
 
         # Add home button
-        self.add_home_button()
+        self.add_back_button()
 
 class SubstanciasScreen(BaseScreen):
     def __init__(self, **kwargs):
@@ -457,7 +429,7 @@ class SubstanciasScreen(BaseScreen):
         self.create_buttons(button_texts)
 
         # Add home button
-        self.add_home_button()
+        self.add_back_button()
 
 class HabitosDeVidaScreen(BaseScreen):
     def __init__(self, **kwargs):
@@ -474,7 +446,7 @@ class HabitosDeVidaScreen(BaseScreen):
         self.create_buttons(button_texts)
 
         # Add home button
-        self.add_home_button()
+        self.add_back_button()
 
 class RevisaoDeSistemasScreen(BaseScreen):
     def __init__(self, **kwargs):
@@ -495,7 +467,7 @@ class RevisaoDeSistemasScreen(BaseScreen):
         self.create_buttons(button_texts)
 
         # Add home button
-        self.add_home_button()
+        self.add_back_button()
 
 # Level 3 Screens
 class HMAMedicamentosNaoCronicosScreen(BaseScreen):
@@ -512,7 +484,7 @@ class HMAMedicamentosNaoCronicosScreen(BaseScreen):
         self.create_buttons(button_texts)
 
         # Add home button
-        self.add_home_button()
+        self.add_back_button()
 
 class HMADecalogoDaDorScreen(BaseScreen):
     def __init__(self, **kwargs):
@@ -536,7 +508,7 @@ class HMADecalogoDaDorScreen(BaseScreen):
         self.create_buttons(button_texts)
 
         # Add home button
-        self.add_home_button()
+        self.add_back_button()
 
 class HPPCirurgiasScreen(BaseScreen):
     def __init__(self, **kwargs):
@@ -551,7 +523,7 @@ class HPPCirurgiasScreen(BaseScreen):
         self.create_buttons(button_texts)
 
         # Add home button
-        self.add_home_button()
+        self.add_back_button()
 
 class HPPMedicamentosCronicosScreen(BaseScreen):
     def __init__(self, **kwargs):
@@ -567,7 +539,7 @@ class HPPMedicamentosCronicosScreen(BaseScreen):
         self.create_buttons(button_texts)
 
         # Add home button
-        self.add_home_button()
+        self.add_back_button()
 
 class HistoriaFisiologicaRelacaoSexualScreen(BaseScreen):
     def __init__(self, **kwargs):
@@ -584,7 +556,7 @@ class HistoriaFisiologicaRelacaoSexualScreen(BaseScreen):
         self.create_buttons(button_texts)
 
         # Add home button
-        self.add_home_button()
+        self.add_back_button()
 
 class HistoriaFisiologicaGestacaoScreen(BaseScreen):
     def __init__(self, **kwargs):
@@ -600,7 +572,7 @@ class HistoriaFisiologicaGestacaoScreen(BaseScreen):
         self.create_buttons(button_texts)
 
         # Add home button
-        self.add_home_button()
+        self.add_back_button()
 
 class HistoriaFisiologicaExamesPreventivosScreen(BaseScreen):
     def __init__(self, **kwargs):
@@ -615,7 +587,7 @@ class HistoriaFisiologicaExamesPreventivosScreen(BaseScreen):
         self.create_buttons(button_texts)
 
         # Add home button
-        self.add_home_button()
+        self.add_back_button()
 
 class HistoriaFisiologicaMenopausaScreen(BaseScreen):
     def __init__(self, **kwargs):
@@ -630,7 +602,7 @@ class HistoriaFisiologicaMenopausaScreen(BaseScreen):
         self.create_buttons(button_texts)
 
         # Add home button
-        self.add_home_button()
+        self.add_back_button()
 
 class HistoriaFisiologicaPuberdadeScreen(BaseScreen):
     def __init__(self, **kwargs):
@@ -647,7 +619,7 @@ class HistoriaFisiologicaPuberdadeScreen(BaseScreen):
         self.create_buttons(button_texts)
 
         # Add home button
-        self.add_home_button()
+        self.add_back_button()
 
 class HistoriaPsicossocialHabitacaoScreen(BaseScreen):
     def __init__(self, **kwargs):
@@ -663,7 +635,7 @@ class HistoriaPsicossocialHabitacaoScreen(BaseScreen):
         self.create_buttons(button_texts)
 
         # Add home button
-        self.add_home_button()
+        self.add_back_button()
 
 class SubstanciasAlcoolScreen(BaseScreen):
     def __init__(self, **kwargs):
@@ -679,7 +651,7 @@ class SubstanciasAlcoolScreen(BaseScreen):
         self.create_buttons(button_texts)
 
         # Add home button
-        self.add_home_button()
+        self.add_back_button()
 
 class SubstanciasTabacoScreen(BaseScreen):
     def __init__(self, **kwargs):
@@ -695,7 +667,7 @@ class SubstanciasTabacoScreen(BaseScreen):
         self.create_buttons(button_texts)
 
         # Add home button
-        self.add_home_button()
+        self.add_back_button()
 
 class SubstanciasDrogasIlicitasScreen(BaseScreen):
     def __init__(self, **kwargs):
@@ -711,4 +683,4 @@ class SubstanciasDrogasIlicitasScreen(BaseScreen):
         self.create_buttons(button_texts)
 
         # Add home button
-        self.add_home_button()
+        self.add_back_button()
