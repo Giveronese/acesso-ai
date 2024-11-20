@@ -1,5 +1,6 @@
 - cd acesso-ai/
-- git status
-- git add <nome_do_arquivo> ou "."
-- git commit -m "mensagem explicando o que voce fez brevemente"
-- git push
+- git pull (esse comando sincroniza/puxa o seu repositório local com o repositório do Github, da nuvem)
+- git status (esse comando mostra os arquivos que foram modificados por você desde a última sincronização)
+- git add <nome_do_arquivo> ou "." (esse comando adiciona arquivos para serem subidos para o repositório do Github)
+- git commit -m "mensagem explicando o que voce fez brevemente" (esse comando adiciona uma mensagem para explicar o que você fez nas modificações que foram adicionadas no comando anterior)
+- git push (esse comando sincroniza/envia os arquivos modificados pra o repositório da nuvem)
